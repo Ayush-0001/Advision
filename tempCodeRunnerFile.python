@@ -1,0 +1,10 @@
+import pickle
+
+# Load the model
+with open('model_svm.pickle', 'rb') as f:
+    model = pickle.load(f)
+
+# Check if the model has a support_vectors_ attribute
+is_trained = hasattr(model, 'support_vectors_')
+
+print("Is the model already trained?", is_trained)

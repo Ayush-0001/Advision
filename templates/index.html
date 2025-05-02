@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AdVision - Smart Advertisement System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    .navbar-nav .nav-link {
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #00e0ff;
+      transform: translateY(-2px);
+    }
+    :root {
+      --main-bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --hover-border: rgba(255, 255, 255, 0.8);
+      --text-color: white;
+      --glow-color: #00fff0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Urbanist', sans-serif;
+      background: var(--main-bg);
+      color: var(--text-color);
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      line-height: 1.6;
+      transition: all 0.4s ease-in-out;
+    }
+
+    h1, h2 {
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #00fff0, #ff00c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #greeting {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      color: var(--text-color);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-5px) scale(1.01);
+      border-color: var(--hover-border);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #adDisplay {
+      width: 100%;
+      border-radius: 1rem;
+      border: 3px solid var(--glow-color);
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px var(--glow-color); }
+      100% { box-shadow: 0 0 25px var(--glow-color); }
+    }
+
+    .btn-theme, .btn-toggle {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      padding: 8px 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-theme:hover, .btn-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #fff;
+    }
+
+    #loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #00fff0;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      display: none;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .light-mode {
+      background: #f8f9fa !important;
+      color: #212529 !important;
+    }
+
+    .light-mode .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      color: #000;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 30px;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(120deg, rgba(255, 0, 150, 0.15), rgba(0, 229, 255, 0.15));
+      backdrop-filter: blur(12px);
+      z-index: -1;
+      animation: moveGradient 15s ease infinite alternate;
+    }
+  
+    @keyframes moveGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+  
+    /* 🎞️ Ad Flip Animation */
+    #adDisplay {
+      transition: transform 0.8s ease-in-out;
+      transform-style: preserve-3d;
+    }
+  
+    #adDisplay.flip {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold fs-3 text-white" href="#">AdVision</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link text-white px-3 fw-semibold" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white px-3 fw-semibold" href="#">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white px-3 fw-semibold" href="#">Portfolio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white px-3 fw-semibold" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+
+  <!-- Consent Modal -->
+  <div class="modal fade" id="consentModal" tabindex="-1" aria-labelledby="consentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-dark">
+        <div class="modal-header">
+          <h5 class="modal-title" id="consentModalLabel">User Consent</h5>
+        </div>
+        <div class="modal-body">
+          This site uses your webcam to detect demographics for personalized advertisements. Please click "Start" to continue.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="startButton">Start</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h1>AdVision</h1>
+  <div id="greeting">Welcome!</div>
+
+  <div class="container mt-4">
+    <div class="row g-4 justify-content-center">
+      <!-- Webcam -->
+      <div class="col-md-6">
+        <div class="glass-card">
+          <h2>Live Camera Feed</h2>
+          <img id="webcam" src="" width="100%" height="auto" alt="Live Feed">
+          <div class="d-flex align-items-center mt-2">
+            <div id="prediction">Detecting...</div>
+            <div id="loader"></div>
+          </div>
+          <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-toggle btn-sm" onclick="toggleWebcam()">Pause / Resume</button>
+            <button class="btn btn-theme btn-sm" onclick="toggleTheme()">🌗 Theme</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advertisement -->
+      <div class="col-md-5">
+        <div class="glass-card">
+            <h2>Targeted Advertisement</h2>
+            <!-- Make the image clickable by wrapping it with an anchor tag -->
+            <a href="{{ ad_link }}" target="_blank">
+                <img id="adDisplay" src="{{ ad_image }}" alt="Advertisement" style="width: 100%; height: auto;">
+            </a>
+        </div>
+    </div>
+    
+
+
+      <!-- System Overview -->
+      <div class="col-md-10">
+        <div class="glass-card mt-4">
+          <h2>System Overview</h2>
+          <p>
+            <strong>AdVision</strong> is a smart advertising system that uses live camera input to detect user presence and dynamically switch advertisements based on viewer engagement.
+          </p>
+          <p>
+            <strong>Status:</strong> <span class="text-success">Running Smoothly</span> | <strong>System Mode:</strong> Real-Time Detection Active | <strong>Last Checked:</strong> <span id="lastUpdate">--:--:--</span>
+          </p>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 AdVision | Smart Advertisement System
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let webcamPaused = true;
+    const webcam = document.getElementById('webcam');
+    const adImg = document.getElementById('adDisplay');
+    const predictionBox = document.getElementById('prediction');
+    const loader = document.getElementById('loader');
+    const body = document.body;
+
+    function toggleTheme() {
+      body.classList.toggle("light-mode");
+    }
+
+    function updateAdAndPrediction() {
+      if (!webcamPaused) {
+        loader.style.display = "inline-block";
+        fetch('/ad_path')
+          .then(res => res.text())
+          .then(path => {
+            adImg.src = path + '?' + new Date().getTime();
+          });
+
+        fetch('/prediction')
+          .then(res => res.text())
+          .then(text => {
+            predictionBox.innerText = `Current Target: ${text}`;
+          })
+          .finally(() => {
+            loader.style.display = "none";
+          });
+      }
+    }
+
+    setInterval(updateAdAndPrediction, 2000);
+
+    function toggleWebcam() {
+      webcamPaused = !webcamPaused;
+      webcam.src = webcamPaused ? '' : "{{ url_for('video') }}";
+    }
+
+    function updateGreeting() {
+      const greeting = document.getElementById('greeting');
+      const now = new Date();
+      const hour = now.getHours();
+      const time = now.toLocaleTimeString();
+      let msg = 'Good evening';
+      if (hour < 12) msg = 'Good morning';
+      else if (hour < 18) msg = 'Good afternoon';
+      greeting.textContent = `${msg}, current time: ${time}`;
+    }
+
+    function updateLastUpdateTime() {
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent = now.toLocaleTimeString();
+    }
+
+    window.onload = function () {
+      const consentModal = new bootstrap.Modal(document.getElementById('consentModal'));
+      consentModal.show();
+
+      document.getElementById('startButton').onclick = function () {
+        webcamPaused = false;
+        webcam.src = "{{ url_for('video') }}";
+        consentModal.hide();
+      };
+    };
+
+    setInterval(updateGreeting, 1000);
+    setInterval(updateLastUpdateTime, 1000);
+    updateGreeting();
+    updateLastUpdateTime();
+    // Flip ad image every 10 seconds
+setInterval(() => {
+  if (!webcamPaused) {
+    adImg.classList.add("flip");
+    setTimeout(() => adImg.classList.remove("flip"), 800);
+  }
+}, 10000);
+
+  </script>
+</body>
+
+</html>
